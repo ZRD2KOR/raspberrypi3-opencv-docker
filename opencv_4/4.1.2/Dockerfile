@@ -1,4 +1,4 @@
-FROM resin/raspberrypi3-python:2.7
+FROM balenalib/raspberrypi3-debian:stretch
 
 # Update Debian sources
 RUN printf "deb http://archive.debian.org/debian/ jessie main\ndeb-src http://archive.debian.org/debian/ jessie main\ndeb http://security.debian.org jessie/updates main\ndeb-src http://security.debian.org jessie/updates main" > /etc/apt/sources.list
@@ -23,16 +23,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get -y autoremove
 
-# Install Python packages
-RUN pip install --no-cache-dir \
-    numpy \
-    ipython \
-    && find /usr/local \
-       \( -type d -a -name test -o -name tests \) \
-       -o \( -type f -a -name '*.pyc' -o -name '*.pyo' \) \
-       -exec rm -rf '{}' + \
-    && cd / \
-    && rm -rf /usr/src/python ~/.cache
+# Install Python and packages
+RUN apt-get install -y python2.7 python-pip && pip install --no-cache-dir numpy ipython
 
 # Copy and install OpenCV
 COPY download_build_install_opencv.sh download_build_install_opencv.sh
